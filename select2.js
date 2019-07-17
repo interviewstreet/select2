@@ -827,6 +827,7 @@ the specific language governing permissions and limitations under the Apache Lic
                             node.addClass("select2-results-dept-"+depth);
                             node.addClass("select2-result");
                             node.addClass(selectable ? "select2-result-selectable" : "select2-result-unselectable");
+                            node.addClass(result.new ? "new-tag" : "");
                             if (disabled) { node.addClass("select2-disabled"); }
                             if (compound) { node.addClass("select2-result-with-children"); }
                             node.addClass(self.opts.formatResultCssClass(result));
@@ -942,6 +943,15 @@ the specific language governing permissions and limitations under the Apache Lic
             }
             if (typeof(opts.query) !== "function") {
                 throw "query function not defined for Select2 " + opts.element.attr("id");
+            }
+            if (opts.createSearchChoicePosition === 'top') {
+                opts.createSearchChoicePosition = function(list, item) { list.unshift(item); };
+            }
+            else if (opts.createSearchChoicePosition === 'bottom') {
+                opts.createSearchChoicePosition = function(list, item) { list.push(item); };
+            }
+            else if (typeof(opts.createSearchChoicePosition) !== "function")  {
+                throw "invalid createSearchChoicePosition option must be 'top', 'bottom' or a custom function";
             }
 
             return opts;
@@ -1564,7 +1574,7 @@ the specific language governing permissions and limitations under the Apache Lic
                             function () {
                                 return equal(self.id(this), self.id(def));
                             }).length === 0) {
-                            data.results.unshift(def);
+                            this.opts.createSearchChoicePosition(data.results, def);
                         }
                     }
                 }
@@ -3023,7 +3033,8 @@ the specific language governing permissions and limitations under the Apache Lic
         blurOnChange: false,
         selectOnBlur: false,
         adaptContainerCssClass: function(c) { return c; },
-        adaptDropdownCssClass: function(c) { return null; }
+        adaptDropdownCssClass: function(c) { return null; },
+        createSearchChoicePosition: 'top'
     };
 
     $.fn.select2.ajaxDefaults = {
