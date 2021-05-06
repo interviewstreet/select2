@@ -1522,7 +1522,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 } else {
                     render("");
                 }
-                if (initial) this.showSearch(true);
+                if (initial && this.showSearch) this.showSearch(true);
                 return;
             }
 
